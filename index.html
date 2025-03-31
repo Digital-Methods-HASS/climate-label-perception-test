@@ -330,20 +330,29 @@
       fixation.style.display = 'block';
       img.style.display = 'none';
     
-      // After 1000ms, hide fixation and show image
+      // Show fixation cross for 1000 ms, then image for exactly 1500 ms
+      fixation.style.display = 'block';
+      img.style.display = 'none';
+      
       setTimeout(() => {
         fixation.style.display = 'none';
         img.src = stim.imageFile;
         img.style.display = 'block';
-    
-        // After 1500ms of image, show questions
-        setTimeout(() => {
-          img.style.display = 'none';
-          document.getElementById('questions').style.display = 'block';
-          trialStartTime = Date.now();
-        }, 1500);
+      
+        const start = performance.now();
+      
+        function checkTime(now) {
+          if (now - start >= 1500) {
+            img.style.display = 'none';
+            document.getElementById('questions').style.display = 'block';
+            trialStartTime = Date.now();
+          } else {
+            requestAnimationFrame(checkTime);
+          }
+        }
+      
+        requestAnimationFrame(checkTime);
       }, 1000);
-    }
 
 
 
